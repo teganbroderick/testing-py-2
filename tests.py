@@ -8,26 +8,29 @@ class PartyTests(unittest.TestCase):
     """Tests for my party site."""
 
     def setUp(self):
-        self.client = app.test_client()
-        app.config['TESTING'] = True
+        self.client = app.test_client() #instantiated the Flask test client here, and set it as an instance attribute, client, of the test class
+        app.config['TESTING'] = True #set the TESTING configuration variable for Flask, which causes any Flask errors to be printed to the same console as the tests, helping debug errors that happen during tests.
 
-    def test_homepage(self):
+    def test_homepage(self): #integration test
         result = self.client.get("/")
         self.assertIn(b"board games, rainbows, and ice cream sundaes", result.data)
 
     def test_no_rsvp_yet(self):
         # FIXME: Add a test to show we see the RSVP form, but NOT the
         # party details
-        print("FIXME")
+        result = self.client.get("/")
+        self.assertNotIn(b"123 Magic Unicorn Way", result.data)
+        
+
 
     def test_rsvp(self):
         result = self.client.post("/rsvp",
                                   data={"name": "Jane",
                                         "email": "jane@jane.com"},
                                   follow_redirects=True)
-        # FIXME: Once we RSVP, we should see the party details, but
-        # not the RSVP form
-        print("FIXME")
+        self.assertIn(b"123 Magic Unicorn Way", result.data)
+
+        self.assertNotIn(b"Please RSVP", result.data)
 
 
 class PartyTestsDatabase(unittest.TestCase):
